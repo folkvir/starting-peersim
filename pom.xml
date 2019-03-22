@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>starting-peersim</groupId>
+    <artifactId>starting-peersim</artifactId>
+    <version>starting-peersim</version>
+    <packaging>jar</packaging>
+    <name>starting-peersim</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/info.picocli/picocli -->
+        <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli</artifactId>
+            <version>3.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>djep</groupId>
+            <artifactId>djep</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>jep</groupId>
+            <artifactId>jep</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>peersim</groupId>
+            <artifactId>peersim</artifactId>
+            <version>1.0.5</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <finalName>starting-peersim</finalName>
+                    <shadedArtifactAttached>true</shadedArtifactAttached>
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                            <manifestEntries>
+                                <Main-Class>App</Main-Class>
+                                <addClasspath>true</addClasspath>
+                            </manifestEntries>
+                        </transformer>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer" />
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer">
+                            <addHeader>false</addHeader>
+                        </transformer>
+                    </transformers>
+                    <filters>
+                        <filter>
+                            <artifact>*</artifact>
+                            <excludes>
+                                <!-- Some jars are signed but shading breaks that.
+                                     Don't include signing files.
+                                -->
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.2</version>
+                <executions>
+                    <execution>
+                        <id>jep</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>jep</groupId>
+                            <repositoryLayout>default</repositoryLayout>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                            <artifactId>jep</artifactId>
+                            <version>2.3.0</version>
+                            <packaging>jar</packaging>
+                            <file>${project.basedir}/src/main/resources/jep-2.3.0.jar</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>djep</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>djep</groupId>
+                            <repositoryLayout>default</repositoryLayout>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                            <artifactId>djep</artifactId>
+                            <version>1.0.0</version>
+                            <packaging>jar</packaging>
+                            <file>${project.basedir}/src/main/resources/djep-1.0.0.jar</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>peersim</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>peersim</groupId>
+                            <repositoryLayout>default</repositoryLayout>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                            <artifactId>peersim</artifactId>
+                            <version>1.0.5</version>
+                            <packaging>jar</packaging>
+                            <file>${project.basedir}/src/main/resources/peersim-1.0.5.jar</file>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.2</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>
